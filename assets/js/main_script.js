@@ -1,5 +1,14 @@
+require("dotenv").config();
 //Grabbing the AXIOS package.
 var axios = require("axios");
+
+
+//Grabbing the SPOTIFY package.
+var Spotify = require('node-spotify-api');
+
+var keys = require("./keys.js");
+
+var fs = require("fs");
 
 //Testing for axios
 //console.log("AXIOS :: ", axios)
@@ -7,52 +16,84 @@ var axios = require("axios");
 //Variables ===== ===== ===== ===== =====
 var userInputKeywordAddress = process.argv.length - 2;
 var userInputKeyword = process.argv[userInputKeywordAddress];
-console.log(process.argv[userInputKeywordAddress]);
+
 
 var userInputSubjectAddress = process.argv.length - 1;
 var userInputSubject = process.argv[userInputSubjectAddress];
+
+console.log("");
+console.log("===== Checking the argv array =====")
+console.log("");
+console.log("Full Array :: ", process.argv);
+console.log(process.argv[userInputKeywordAddress]);
 console.log(process.argv[userInputSubjectAddress]);
+console.log("");
+console.log("===== ===== ===== ===== ===== =====");
+
+console.log("");
+console.log("");
+console.log("");
+
+
+//console.log("ENV STUFF: ", module.exports);
+
 
 
 var OMDB_base = "http://www.omdbapi.com/";
 var OMDB_title = "?t=";
 var OMDB_user_title = "";
-var OMDB_filler = "&y=&plot=short&apikey="
-//var OMDB_key = (require./.env.omdb_key);
-
-//var OMDB_FULL = OMDB_base + OMDB_title + OMDB_user_title + OMDB_filler + OMDB_key;
+var OMDB_filler = "&y=&plot=short&apikey=";
+var OMDB_key = "d86f8148";
 
 
+var spotify = new Spotify(keys.spotify);
 
-//console.log(process.argv.slice(2));
-//console.log(process.argv.length);
-//console.log(process.argv[2]);
+var SPOTIFY_title = process.argv[3];
 
-const dotenv = require("dotenv");
-dotenv.config();
+/*
+var OMDB_FULL = OMDB_base + OMDB_title + OMDB_user_title + OMDB_filler + OMDB_key;
 
-module.exports = {
-    spotify_ID: process.env.SPOTIFY_ID,
-    spotify_Secret: process.env.SPOTIFY_SECRET
+console.log("===== Checking full OMDB query =====");
+console.log("");
+console.log("OMDB full query: ", OMDB_FULL);
+console.log("");
+console.log("===== ===== ===== ===== ===== =====");
+*/
 
-};
-
-//console.log("ENV STUFF: ", module.exports);
+var keyWord = process.argv[2];
+OMDB_user_title = process.argv[3];
 
 // ===== ===== ===== ===== =====
 
+search_switch(keyWord);
 
 
-function search_switch() {
+
+function search_switch(keyWord) {
 
 
-    switch ("search") {
+    switch (keyWord) {
         case "movie-this":
-            text = "Querying OMDB...";
-            OMDB_query();
+
+            console.log("querying OMDB");
+            OMDB_user_title = process.argv[3];
+            var OMDB_FULL = OMDB_base + OMDB_title + OMDB_user_title + OMDB_filler + OMDB_key;
+
+            console.log("===== Checking full OMDB query =====");
+            console.log("");
+            console.log("OMDB full query: ", OMDB_FULL);
+            console.log("");
+            console.log("===== ===== ===== ===== ===== =====");
+
+            //THIS IS MY GO AND GET IT FUNCTION
+            OMDB_query(OMDB_FULL);
+
             break;
         case "spotify-this":
-            text = "I am not a fan of orange.";
+
+            console.log("querying SPOTIFY");
+            SPOTIFY_query(SPOTIFY_title);
+
             break;
         case "concert-this":
             text = "How you like them apples?";
@@ -67,14 +108,16 @@ function search_switch() {
 };
 
 
-function OMDB_query() {
+function OMDB_query(OMDB_FULL) {
 
 
 
-    axios.get("http://www.omdbapi.com/?t=remember+the+titans&y=&plot=short&apikey=trilogy").then(
+    axios.get(OMDB_FULL).then(
         function (response) {
             //THIS IS THE RESPONSE SECTION!
-            console.log("The movie's rating is: " + response.data.imdbRating);
+            console.log("The movie's rating is: " + response.data.Title);
+            console.log("The movie's rating is: " + response.data.Year);
+            console.log("The movie's rating is: " + response.data.Rated);
 
 
         })
@@ -88,18 +131,40 @@ function OMDB_query() {
                 console.log(error.response.status);
                 console.log("---------------Status---------------");
                 console.log(error.response.headers);
-            } else if (error.request) {
+            } else if ("ERROR: ", error.request) {
                 // The request was made but no response was received
                 // `error.request` is an object that comes back with details pertaining to the error that occurred.
-                console.log(error.request);
+                console.log("ERROR: ", error.request);
             } else {
                 // Something happened in setting up the request that triggered an Error
-                console.log("Error", error.message);
+                console.log("ERROR: ", error.message);
             }
             console.log(error.config);
         });
 
-
-
-    //END OF FUNCTION
 };
+
+//END OF FUNCTION
+
+
+function SPOTIFY_query(SPOTIFY_title) {
+
+    
+
+    console.log(module.exports.SPOTIFY_ID);
+    console.log(module.exports.SPOTIFY_SECRET);
+
+    spotify.search({ type: 'track', query: SPOTIFY_title }, function (err, data) {
+        if (err) {
+            return console.log('Error occurred: ' + err);
+        }
+
+        console.log(data);
+    });
+
+};
+
+
+function BAND_query(BAND_title) {
+    
+}
