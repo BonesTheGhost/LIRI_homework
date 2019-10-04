@@ -21,6 +21,7 @@ var userInputKeyword = process.argv[userInputKeywordAddress];
 var userInputSubjectAddress = process.argv.length - 1;
 var userInputSubject = process.argv[userInputSubjectAddress];
 
+/*
 console.log("");
 console.log("===== Checking the argv array =====")
 console.log("");
@@ -33,7 +34,7 @@ console.log("===== ===== ===== ===== ===== =====");
 console.log("");
 console.log("");
 console.log("");
-
+*/
 
 //console.log("ENV STUFF: ", module.exports);
 
@@ -41,7 +42,7 @@ console.log("");
 
 var OMDB_base = "http://www.omdbapi.com/";
 var OMDB_title = "?t=";
-var OMDB_user_title = "";
+var OMDB_user_title = "Mr+Nobody";
 var OMDB_filler = "&y=&plot=short&apikey=";
 var OMDB_key = "d86f8148";
 
@@ -49,6 +50,8 @@ var OMDB_key = "d86f8148";
 var spotify = new Spotify(keys.spotify);
 
 var SPOTIFY_title = process.argv[3];
+
+var myBand = process.argv[3];
 
 /*
 var OMDB_FULL = OMDB_base + OMDB_title + OMDB_user_title + OMDB_filler + OMDB_key;
@@ -149,22 +152,26 @@ function OMDB_query(OMDB_FULL) {
 
 function SPOTIFY_query(SPOTIFY_title) {
 
-    
-
-    console.log(module.exports.SPOTIFY_ID);
-    console.log(module.exports.SPOTIFY_SECRET);
-
     spotify.search({ type: 'track', query: SPOTIFY_title }, function (err, data) {
         if (err) {
             return console.log('Error occurred: ' + err);
         }
 
-        console.log(data);
+        //console.log(data.tracks);
+
+        console.log(data.tracks.items[0].name);
+        console.log(data.tracks.items[0].album.artists[0].name);
+        console.log(data.tracks.items[0].album.name);
+        console.log(data.tracks.href);
     });
 
 };
 
 
-function BAND_query(BAND_title) {
-    
+function BAND_query(myBand) {
+    var queryURL = "https://rest.bandsintown.com/artists/" + myBand + "?app_id=codingbootcamp";
+
+    console.log(queryURL.name);
+    console.log(queryURL.image_url);
+    console.log(queryURL.url);
 }
